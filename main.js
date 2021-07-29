@@ -25,14 +25,59 @@ Drink.prototype.price = function() {
   }
 }
 
-let blackTea = new Drink('Black Tea', 'Half Sugar', 'No Ice')
-console.log(blackTea)
-console.log(blackTea.price())
+const addDrinkButton = document.querySelector('[data-alpha-pos="add-drink"]')
+const orderLists = document.querySelector('[data-order-lists]')
 
-let lemonGreenTea = new Drink('Lemon Green Tea', 'No Sugar', 'Less Ice')
-console.log(lemonGreenTea)
-console.log(lemonGreenTea.price())
 
-let matchaLatte = new Drink('Matcha Latte', 'Less Sugar', 'Regular Ice')
-console.log(matchaLatte)
-console.log(matchaLatte.price())
+
+const alphaPos = new AlphaPos()
+addDrinkButton.addEventListener('click', function() {
+  console.log('click')
+  // １・取得店員選擇的飲料品項、甜度和冰塊
+  const drinkName = alphaPos.getCheckedValue('drink')
+  const ice = alphaPos.getCheckedValue('ice')
+  const sugar = alphaPos.getCheckedValue('sugar')
+  console.log(`${drinkName}, ${ice}, ${sugar}`)
+  // ２・如果沒有選擇飲料品項，跳出提示
+  if (!drinkName) {
+    alert('Please at least choose one item.')
+    return
+  }
+  // ３・建立飲料實例，並取得飲料價格
+  const drink = new Drink(drinkName, sugar, ice)
+  console.log(drink)
+  console.log(drink.price())
+  // ４・將飲料實例產生成左側訂單區的畫面
+  alphaPos.addDrink(drink)
+  
+})
+
+// Constructor function for Alpha Pos System
+function AlphaPos() {}
+AlphaPos.prototype.getCheckedValue = function (inputName) {
+  let selectedOption = ''
+  document.querySelectorAll(`[name=${inputName}]`).forEach(function (item) {
+    if (item.checked) {
+      selectedOption = item.value
+    }
+  })
+  return selectedOption
+}
+AlphaPos.prototype.addDrink = function (drink) {
+  let orderCardHTML = `
+    <div class="card mb-3">
+      <div class="card-body pt-3 pr-3">
+        <div class="text-right">
+          <span data-alpha-pos="delete-drink">×</span>
+        </div>
+        <h6 class="card-title mb-1">${drink.name}</h6>
+        <div class="card-text">${drink.ice}</div>
+        <div class="card-text">${drink.sugar}</div>
+      </div>
+      <div class="card-footer text-right py-2">
+        <div class="card-text text-muted">$ <span data-drink-price>${drink.price()}</span></div>
+      </div>
+    </div>
+    `
+  orderLists.insertAdjacentHTML('afterbegin', orderCardHTML)
+}
