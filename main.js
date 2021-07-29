@@ -28,11 +28,9 @@ Drink.prototype.price = function() {
 const addDrinkButton = document.querySelector('[data-alpha-pos="add-drink"]')
 const orderLists = document.querySelector('[data-order-lists]')
 
-
-
 const alphaPos = new AlphaPos()
-addDrinkButton.addEventListener('click', function() {
-  console.log('click')
+
+addDrinkButton.addEventListener('click', function(event) {
   // １・取得店員選擇的飲料品項、甜度和冰塊
   const drinkName = alphaPos.getCheckedValue('drink')
   const ice = alphaPos.getCheckedValue('ice')
@@ -50,6 +48,15 @@ addDrinkButton.addEventListener('click', function() {
   // ４・將飲料實例產生成左側訂單區的畫面
   alphaPos.addDrink(drink)
   
+})
+
+orderLists.addEventListener('click', function(event) {
+  let isDeleteButton = event.target.matches('[data-alpha-pos="delete-drink"]')
+  if (!isDeleteButton) {
+    return
+  }
+  // get card element
+  alphaPos.deleteDrink(event.target.parentElement.parentElement.parentElement)
 })
 
 // Constructor function for Alpha Pos System
@@ -80,4 +87,7 @@ AlphaPos.prototype.addDrink = function (drink) {
     </div>
     `
   orderLists.insertAdjacentHTML('afterbegin', orderCardHTML)
+}
+AlphaPos.prototype.deleteDrink = function (target) {
+  target.remove()
 }
