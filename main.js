@@ -6,7 +6,6 @@ function Drink(name, sugar, ice) {
 }
 
 // price methods: get price according to drink
-
 Drink.prototype.price = function() {
   switch(this.name) {
     case 'Black Tea':
@@ -27,10 +26,11 @@ Drink.prototype.price = function() {
 
 const addDrinkButton = document.querySelector('[data-alpha-pos="add-drink"]')
 const orderLists = document.querySelector('[data-order-lists]')
+const checkoutButton = document.querySelector('[data-alpha-pos="checkout"]')
 
 const alphaPos = new AlphaPos()
 
-addDrinkButton.addEventListener('click', function(event) {
+addDrinkButton.addEventListener('click', function() {
   // １・取得店員選擇的飲料品項、甜度和冰塊
   const drinkName = alphaPos.getCheckedValue('drink')
   const ice = alphaPos.getCheckedValue('ice')
@@ -57,6 +57,13 @@ orderLists.addEventListener('click', function(event) {
   }
   // get card element
   alphaPos.deleteDrink(event.target.parentElement.parentElement.parentElement)
+})
+
+checkoutButton.addEventListener('click', function(event) {
+  // １・計算訂單總金額
+  alert(`Total amount of drinks: $${alphaPos.checkout()}`)
+  // 2・清空訂單
+  alphaPos.clearOrder(orderLists)
 })
 
 // Constructor function for Alpha Pos System
@@ -90,4 +97,16 @@ AlphaPos.prototype.addDrink = function (drink) {
 }
 AlphaPos.prototype.deleteDrink = function (target) {
   target.remove()
+}
+AlphaPos.prototype.checkout = function() {
+  let totalAmount = 0
+  document.querySelectorAll('[data-drink-price]').forEach(function(drink) {
+    totalAmount += Number(drink.textContent)
+  })
+  return totalAmount
+}
+AlphaPos.prototype.clearOrder = function(target) {
+  target.querySelectorAll('.card').forEach(function(card) {
+    card.remove()
+  })
 }
